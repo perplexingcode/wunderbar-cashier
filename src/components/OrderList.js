@@ -1,0 +1,192 @@
+import {Button, ConfigProvider, Empty, Space, Table} from 'antd';
+import {useState} from 'react';
+import async from "async";
+
+const lockerOrder = 'wunderbar_order';
+const apiUrl =
+    'https://vq4h0iro9k.execute-api.ap-southeast-1.amazonaws.com/locker';
+
+const columns = [
+    {
+        title: 'Table No.',
+        dataIndex: 'key',
+        sorter: (a, b) => a.key - b.key,
+        sortDirections: ['ascend', 'descend'],
+    },
+    {
+        title: 'Customer',
+        dataIndex: 'customer',
+    },
+    {
+        title: 'Details',
+        dataIndex: 'description',
+        width: '55%',
+    },
+    {
+        title: 'Total Price ($)',
+        dataIndex: 'price',
+        width: '10%',
+    },
+    {
+        title: 'Timestamp',
+        dataIndex: 'timeStamp',
+        sorter: (a, b) => {
+            let timeA = a.timeStamp.split(':')
+            let timeB = b.timeStamp.split(':')
+            return ((Number(timeA[0]) - Number(timeB[0])) * 3600 + (Number(timeA[1]) - Number(timeB[1]))) * 60 + (Number(timeA[2]) - Number(timeB[2]))
+        },
+        sortDirections: ['descend', 'ascend'],
+        width: '10%',
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
+        filters: [
+            {
+                text: 'Received',
+                value: 'Received',
+            },
+            {
+                text: 'Processing',
+                value: 'Processing',
+            },
+            {
+                text: 'Cancelled',
+                value: 'Cancelled',
+            },
+            {
+                text: 'Done',
+                value: 'Done',
+            },
+        ],
+        onFilter: (value, record) => record.status.startsWith(value),
+        filterSearch: true,
+        width: '10%',
+    },
+
+];
+var data = [
+    {
+        key: 4,
+        customer: "anh Dong",
+        description: "Milk tea coffee: Hot drink Size S with 4 pumps of chocolate sauce: 3.25$\nSandwiches: with turkey and egg: 5$",
+        price: "10$",
+        timeStamp: "15:30",
+        status: "New"
+    },
+    {
+        key: 1,
+        customer: "anh Duc",
+        description: "Traditional coffee: Blended drink Size XL: 4$\nBagels: with butter: 3.5$",
+        price: "8$",
+        timeStamp: "15:35",
+        status: "In Progress"
+    },
+    {
+        key: 3,
+        customer: "anh Hoang",
+        description: "Traditional coffee: Cold drink Size L: 3.5$\nBagels: with cream cheese: 3.5$",
+        price: "7$",
+        timeStamp: "15:15",
+        status: "Done"
+    }];
+const OrderList = () => {
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [tableData, setTableData] = useState(data);
+    const onSelectChange = (newSelectedRowKeys) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+    const receiveBill = () => {
+        var result;
+        for (let i = 0; i < selectedRowKeys.length; i++) {
+            result = data.find(obj => {
+                return obj.key === selectedRowKeys[i]
+            })
+            if (result.status === "Received") result.status = "Processing"
+        }
+        let dataToPush = {
+            timeStamp: result.timeStamp,
+            price: result.price,
+            description: result.description,
+            id: result.id,
+            table: result.key,
+            customer: result.customer,
+            status: result.status
+        }
+        fetch(apiUrl + '/upsert/' + lockerOrder, {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(dataToPush),
+        });
+        setTableData(data)
+        setSelectedRowKeys([])
+    }
+
+    const billDone = () => {
+        var result;
+        for (let i = 0; i < selectedRowKeys.length; i++) {
+            result = data.find(obj => {
+                return obj.key === selectedRowKeys[i]
+            })
+            if (result.status === "Processing") result.status = "Done"
+        }
+        let dataToPush = {
+            timeStamp: result.timeStamp,
+            price: result.price,
+            description: result.description,
+            id: result.id,
+            table: result.key,
+            customer: result.customer,
+            status: result.status
+        }
+        fetch(apiUrl + '/upsert/' + lockerOrder, {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(dataToPush),
+        });
+        setTableData(data)
+        setSelectedRowKeys([])
+    }
+
+    async function getOrderStatus() {
+        const res = await fetch(apiUrl + '/get/' + lockerOrder);
+        const data1 = await res.json();
+        if (data1 === null) {}
+        data = []
+        let data2 = [data1]
+        for (var i = 0; i < data2.length; i++) {
+            data.push(
+                {
+                    key: data2[i]["table"],
+                    customer: data2[i]["customer"],
+                    description: data2[i]["description"],
+                    price: data2[i]["price"],
+                    timeStamp: data2[i]["timeStamp"],
+                    status: data2[i]["status"],
+                    id: data2[i]["id"]
+                }
+            )
+        }
+        setTableData(data)
+    }
+
+    setInterval(getOrderStatus, 5000);
+
+
+    return (
+        <div>
+            <ConfigProvider renderEmpty={() => <Empty description="No recent bill"/>}>
+                <Table rowSelection={rowSelection} columns={columns} dataSource={tableData} style={{whiteSpace: "pre-wrap"}}/>
+            </ConfigProvider>
+            <Space wrap style={{float: "right"}}>
+                <Button type="primary" style={{backgroundColor: "goldenrod"}} onClick={receiveBill}>Process selected bills</Button>
+                <Button type="primary" style={{backgroundColor: "green"}} onClick={billDone}>Selected bills done</Button>
+            </Space>
+        </div>
+    )
+};
+export default OrderList;
