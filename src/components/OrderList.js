@@ -1,5 +1,5 @@
 import {Button, ConfigProvider, Empty, Space, Table} from 'antd';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import async from "async";
 
 const lockerOrder = 'wunderbar_order';
@@ -172,9 +172,16 @@ const OrderList = () => {
             )
         }
         setTableData(data)
+        console.log(data)
     }
 
-    setInterval(getOrderStatus, 5000);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            getOrderStatus()
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [])
 
 
     return (
