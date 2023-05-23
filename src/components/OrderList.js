@@ -1,4 +1,4 @@
-import {Button, ConfigProvider, Empty, Space, Table} from 'antd';
+import {App, Button, ConfigProvider, Empty, message, notification, Space, Table} from 'antd';
 import {useEffect, useState} from 'react';
 
 const lockerOrder = 'wunderbar_order';
@@ -105,7 +105,15 @@ const OrderList = () => {
             result = data.find(obj => {
                 return obj.key === selectedRowKeys[i]
             })
-            if (result.status === "Received") result.status = "Processing"
+            if (result.status === "Received") {
+                result.status = "Processing"
+                notification.info({
+                    message: 'Bill for table ' + result.key + '  received!',
+                    description: 'The order is being prepared!',
+                    placement: 'topRight',
+                });
+            }
+
         }
         let dataToPush = {
             timeStamp: result.timeStamp,
@@ -132,6 +140,7 @@ const OrderList = () => {
                 return obj.key === selectedRowKeys[i]
             })
             if (result.status === "Processing") result.status = "Done"
+            message.success('The bill for table ' + result.key + ' done!');
         }
         let dataToPush = {
             timeStamp: result.timeStamp,
