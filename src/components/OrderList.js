@@ -1,4 +1,4 @@
-import {App, Button, ConfigProvider, Empty, message, notification, Space, Table} from 'antd';
+import {Button, ConfigProvider, Empty, message, notification, Space, Table} from 'antd';
 import {useEffect, useState} from 'react';
 
 const lockerOrder = 'wunderbar_order';
