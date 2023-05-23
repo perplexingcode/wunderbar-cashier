@@ -1,6 +1,5 @@
 import {Button, ConfigProvider, Empty, Space, Table} from 'antd';
 import {useEffect, useState} from 'react';
-import async from "async";
 
 const lockerOrder = 'wunderbar_order';
 const apiUrl =
@@ -20,12 +19,12 @@ const columns = [
     {
         title: 'Details',
         dataIndex: 'description',
-        width: '55%',
+        width: '50%',
     },
     {
         title: 'Total Price ($)',
         dataIndex: 'price',
-        width: '10%',
+        width: '15%',
     },
     {
         title: 'Timestamp',
@@ -65,7 +64,7 @@ const columns = [
     },
 
 ];
-var data = [
+let data = [
     {
         key: 4,
         customer: "anh Dong",
@@ -101,7 +100,7 @@ const OrderList = () => {
         onChange: onSelectChange,
     };
     const receiveBill = () => {
-        var result;
+        let result;
         for (let i = 0; i < selectedRowKeys.length; i++) {
             result = data.find(obj => {
                 return obj.key === selectedRowKeys[i]
@@ -127,7 +126,7 @@ const OrderList = () => {
     }
 
     const billDone = () => {
-        var result;
+        let result;
         for (let i = 0; i < selectedRowKeys.length; i++) {
             result = data.find(obj => {
                 return obj.key === selectedRowKeys[i]
@@ -155,24 +154,28 @@ const OrderList = () => {
     async function getOrderStatus() {
         const res = await fetch(apiUrl + '/get/' + lockerOrder);
         const data1 = await res.json();
-        if (data1 === null) {}
         data = []
-        let data2 = [data1]
-        for (var i = 0; i < data2.length; i++) {
-            data.push(
-                {
-                    key: data2[i]["table"],
-                    customer: data2[i]["customer"],
-                    description: data2[i]["description"],
-                    price: data2[i]["price"],
-                    timeStamp: data2[i]["timeStamp"],
-                    status: data2[i]["status"],
-                    id: data2[i]["id"]
-                }
-            )
+        if (data1 !== null // 👈 null and undefined check
+            && Object.keys(data1).length > 0
+            && Object.getPrototypeOf(data1) === Object.prototype) {
+            let data2 = [data1]
+            for (var i = 0; i < data2.length; i++) {
+                data.push(
+                    {
+                        key: data2[i]["table"],
+                        customer: data2[i]["customer"],
+                        description: data2[i]["description"],
+                        price: data2[i]["price"],
+                        timeStamp: data2[i]["timeStamp"],
+                        status: data2[i]["status"],
+                        id: data2[i]["id"]
+                    }
+                )
+            }
+            setTableData(data)
+        } else {
+            setTableData(null)
         }
-        setTableData(data)
-        console.log(data)
     }
 
     useEffect(() => {
