@@ -100,7 +100,7 @@ const OrderList = () => {
         onChange: onSelectChange,
     };
     const receiveBill = () => {
-        let result;
+        let result = null;
         for (let i = 0; i < selectedRowKeys.length; i++) {
             result = data.find(obj => {
                 return obj.key === selectedRowKeys[i]
@@ -114,6 +114,10 @@ const OrderList = () => {
                 });
             }
 
+        }
+        if (result === null) {
+            message.error('No bill selected!');
+            return
         }
         let dataToPush = {
             timeStamp: result.timeStamp,
@@ -134,13 +138,17 @@ const OrderList = () => {
     }
 
     const billDone = () => {
-        let result;
+        let result = null;
         for (let i = 0; i < selectedRowKeys.length; i++) {
             result = data.find(obj => {
                 return obj.key === selectedRowKeys[i]
             })
             if (result.status === "Processing") result.status = "Done"
             message.success('The bill for table ' + result.key + ' done!');
+        }
+        if (result === null) {
+            message.error('No bill selected!');
+            return
         }
         let dataToPush = {
             timeStamp: result.timeStamp,
