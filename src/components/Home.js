@@ -1,22 +1,26 @@
-import { LaptopOutlined, UserOutlined } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import {LaptopOutlined, UserOutlined} from '@ant-design/icons';
+import {BrowserRouter as Router, Route, Link, Routes, useNavigate} from "react-router-dom";
+import {Breadcrumb, Layout, Menu, theme} from 'antd';
 import React from 'react';
 import OrderList from "./OrderList";
 import Clock from "./Clock";
-const { Header, Content, Footer, Sider } = Layout;
+import Feedback from "./Feedback"
 
-const items2 = [UserOutlined, LaptopOutlined].map((icon, index) => {
-    const key = ["Order", "Feedback"];
-    return {
-        icon: React.createElement(icon),
-        label: `${key[index]}`,
-    };
-});
+const {Header, Content, Footer, Sider} = Layout;
+
+const item = [
+    {label: "Order", key: "/order", icon: <UserOutlined/>},
+    {label: "Feedback", key: "/feedback", icon: <LaptopOutlined/>},
+]
+
+
 const Home = () => {
+    const navigate = useNavigate();
     const {
-        token: { colorBgContainer },
+        token: {colorBgContainer},
     } = theme.useToken();
     return (
+
         <Layout>
             <Header
                 style={{
@@ -25,16 +29,16 @@ const Home = () => {
                 }}
             >
                 <div className="demo-logo">
-                    <p style={{color:"cyan"}}>Duc Dong Cafeteria</p>
+                    <p style={{color: "cyan"}}>Duc Dong Cafeteria</p>
                 </div>
-                {/*<Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} items={items1} />*/}
+                {/*<Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} items={items2} />*/}
             </Header>
             <Content
                 style={{
                     padding: '0 50px',
                 }}
             >
-                <Breadcrumb style={{ margin: '4px 0' }}>
+                <Breadcrumb style={{margin: '4px 0'}}>
                     <Clock/>
                 </Breadcrumb>
                 <Layout
@@ -51,6 +55,9 @@ const Home = () => {
                         width={200}
                     >
                         <Menu
+                            onClick={({key}) => {
+                                navigate(key)
+                            }}
                             mode="inline"
                             defaultSelectedKeys={['1']}
                             defaultOpenKeys={['sub1']}
@@ -58,7 +65,7 @@ const Home = () => {
                                 height: '100%',
                                 textAlign: "left"
                             }}
-                            items={items2}
+                            items={item}
                         />
                     </Sider>
                     <Content
@@ -67,7 +74,10 @@ const Home = () => {
                             minHeight: 280,
                         }}
                     >
-                        <OrderList/>
+                        <Routes>
+                            <Route path="/order" element={<OrderList/>}/>
+                            <Route path="/feedback" element={<Feedback/>}/>
+                        </Routes>
                     </Content>
                 </Layout>
             </Content>

@@ -3,7 +3,8 @@ import {useEffect, useState} from 'react';
 
 const lockerOrder = 'wunderbar_order';
 const apiUrl =
-    'https://vq4h0iro9k.execute-api.ap-southeast-1.amazonaws.com/locker';
+    'https://i293244fv0.execute-api.ap-southeast-1.amazonaws.com';
+    // 'https://vq4h0iro9k.execute-api.ap-southeast-1.amazonaws.com/locker';
 
 const columns = [
     {
@@ -169,23 +170,28 @@ const OrderList = () => {
     }
 
     async function getOrderStatus() {
-        const res = await fetch(apiUrl + '/get/' + lockerOrder);
+        // const res = await fetch(apiUrl + '/all/' + lockerOrder);
+        const res = await fetch(apiUrl + '/all/' + lockerOrder)
+            // .then(response => console.log(response.json()))
+            // .then();
         const data1 = await res.json();
+        console.log(Object.prototype)
+        // console.log(apiUrl + '/all/' + lockerOrder)
         data = []
         if (data1 !== null // 👈 null and undefined check
-            && Object.keys(data1).length > 0
-            && Object.getPrototypeOf(data1) === Object.prototype) {
-            let data2 = [data1]
-            for (var i = 0; i < data2.length; i++) {
+            && Object.keys(data1).length > 0) {
+            // && Object.getPrototypeOf(data1) === Object.prototype) {
+            for (var i = 0; i < data1.length; i++) {
+                console.log("have data")
                 data.push(
                     {
-                        key: data2[i]["table"],
-                        customer: data2[i]["customer"],
-                        description: data2[i]["description"],
-                        price: data2[i]["price"],
-                        timeStamp: data2[i]["timeStamp"],
-                        status: data2[i]["status"],
-                        id: data2[i]["id"]
+                        key: data1[i]["table"],
+                        customer: data1[i]["customer"],
+                        description: data1[i]["description"],
+                        price: data1[i]["price"],
+                        timeStamp: data1[i]["timestamp"],
+                        status: data1[i]["status"],
+                        id: data1[i]["id"]
                     }
                 )
             }
