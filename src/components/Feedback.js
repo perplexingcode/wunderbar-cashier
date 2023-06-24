@@ -79,15 +79,15 @@ const Feedback = () => {
         // .then(response => console.log(response.json()))
         // .then();
         const data1 = await res.json();
-        console.log(Object.prototype)
+        // console.log(Object.prototype)
         // console.log(apiUrl + '/all/' + lockerOrder)
         data = []
         if (data1 !== null // 👈 null and undefined check
             && Object.keys(data1).length > 0) {
             // && Object.getPrototypeOf(data1) === Object.prototype) {
             for (var i = 0; i < data1.length; i++) {
-                // console.log(data1[i]["status"] === "Done")
-                if (data1[i]["status"] === "Done")
+                console.log(typeof data1[i]["status"]["review"] === "undefined")
+                if (typeof data1[i]["status"]["review"] !== "undefined" && data1[i]["status"] === "Done")
                 data.push(
                     {
                         key: data1[i]["table"],

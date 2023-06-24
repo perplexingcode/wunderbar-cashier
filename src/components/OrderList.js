@@ -9,8 +9,8 @@ const apiUrl =
 const columns = [
     {
         title: 'Table No.',
-        dataIndex: 'key',
-        sorter: (a, b) => a.key - b.key,
+        dataIndex: 'table',
+        sorter: (a, b) => a.table - b.table,
         sortDirections: ['ascend', 'descend'],
     },
     {
@@ -124,8 +124,8 @@ const OrderList = () => {
             timeStamp: result.timeStamp,
             price: result.price,
             description: result.description,
-            id: result.id,
-            table: result.key,
+            id: result.key,
+            table: result.table,
             customer: result.customer,
             status: result.status
         }
@@ -155,8 +155,8 @@ const OrderList = () => {
             timeStamp: result.timeStamp,
             price: result.price,
             description: result.description,
-            id: result.id,
-            table: result.key,
+            id: result.key,
+            table: result.table,
             customer: result.customer,
             status: result.status
         }
@@ -185,12 +185,13 @@ const OrderList = () => {
                 console.log("have data")
                 data.push(
                     {
-                        key: data1[i]["table"],
+                        key: data1[i]["id"],
                         customer: data1[i]["customer"],
                         description: data1[i]["description"],
                         price: data1[i]["price"],
                         timeStamp: data1[i]["timestamp"],
                         status: data1[i]["status"],
+                        table: data1[i]["table"],
                         id: data1[i]["id"]
                     }
                 )
