@@ -93,7 +93,6 @@ const Feedback = () => {
     ) {
       // && Object.getPrototypeOf(data1) === Object.prototype) {
       for (var i = 0; i < data1.length; i++) {
-        console.log(data1[i]);
         if (typeof data1[i]['review'] !== 'undefined')
           data.push({
             key: data1[i]['table'],
