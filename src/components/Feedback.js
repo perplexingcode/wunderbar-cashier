@@ -69,6 +69,7 @@ let data = [
 ];
 const Feedback = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  // eslint-disable-next-line
   const [tableData, setTableData] = useState(data);
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -92,8 +93,8 @@ const Feedback = () => {
     ) {
       // && Object.getPrototypeOf(data1) === Object.prototype) {
       for (var i = 0; i < data1.length; i++) {
-        console.log(typeof data1[i]['status']['review'] === 'undefined');
-        if (typeof data1[i]['status']['review'] !== 'undefined')
+        console.log(data1[i]);
+        if (typeof data1[i]['review'] !== 'undefined')
           data.push({
             key: data1[i]['table'],
             customer: data1[i]['customer'],
@@ -114,6 +115,7 @@ const Feedback = () => {
     }, 5000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line
   }, []);
 
   return (
